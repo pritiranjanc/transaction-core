@@ -5,8 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 public interface LedgerEntryRepository extends JpaRepository<LedgerEntry,Long> {
-    Page<LedgerEntry> findByAccountId(Long accountId, Pageable pageable);
+    Page<LedgerEntry> findByAccountIdOrderByCreatedAtDesc(Long accountId, Pageable pageable);
 }

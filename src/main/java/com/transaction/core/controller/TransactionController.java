@@ -6,6 +6,7 @@ import com.transaction.core.dto.request.Transfer;
 import com.transaction.core.dto.request.Withdraw;
 import com.transaction.core.dto.response.TransactionDTO;
 import com.transaction.core.service.TransactionService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/transactions")
 @RequiredArgsConstructor
+@Tag(name = "Transactions", description = "Transaction management APIs")
 public class TransactionController {
 
     private final TransactionService transactionService;

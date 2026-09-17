@@ -54,10 +54,10 @@ Example:
             "createdAt": "2026-09-17T23:05:53.908243"
         }
     ],
-    "pageable": {
-        "pageNumber": 0,
-        "pageSize": 20,
-    }
+        "page": 0,
+        "size": 10,
+        "totalElements": 4,
+        "totalPages": 1
     }
 
 POST `/api/v1/transactions/deposit`
@@ -132,5 +132,8 @@ response:
 ## Build and Run Junit
 
     mvn clean install
+    java -jar transaction-core-1.0.0.jar
+
+    I have also enabled swagger UI , we can access the API Docs by http://localhost:8080/swagger-ui/index.html
 
 The unit test runs without Spring or PostgreSQL.

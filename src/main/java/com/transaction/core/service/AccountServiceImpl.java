@@ -1,6 +1,7 @@
 package com.transaction.core.service;
 
 import com.transaction.core.dto.response.AccountDTO;
+import com.transaction.core.dto.response.PageDTO;
 import com.transaction.core.dto.response.TransactionHistory;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
@@ -23,12 +24,19 @@ public class AccountServiceImpl implements AccountService{
     private final LedgerEntryRepository ledgerEntryRepository;
 
     @Override
-    public Page<TransactionHistory> getTransactionHistory(Long accountId, Pageable pageable) {
+    public PageDTO<TransactionHistory> getTransactionHistory(Long accountId, Pageable pageable) {
         if (!accountRepository.existsById(accountId)) {
             throw new AccountNotFoundException(accountId);
         }
-        Page<LedgerEntry> entries = ledgerEntryRepository.findByAccountId(accountId, pageable);
-        return entries.map(this::toResponse);
+        Page<LedgerEntry> entries = ledgerEntryRepository.findByAccountIdOrderByCreatedAtDesc(accountId, pageable);
+        Page<TransactionHistory> transactionHistories =  entries.map(this::toResponse);
+        return PageDTO.<TransactionHistory>builder()
+                .content(transactionHistories.getContent())
+                .page(transactionHistories.getNumber())
+                .size(transactionHistories.getSize())
+                .totalElements(transactionHistories.getTotalElements())
+                .totalPages(transactionHistories.getTotalPages())
+                .build();
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.transaction.core.constants.EntryType;
 import com.transaction.core.constants.TransactionStatus;
 import com.transaction.core.constants.TransactionType;
 import com.transaction.core.dto.response.AccountDTO;
+import com.transaction.core.dto.response.PageDTO;
 import com.transaction.core.dto.response.TransactionHistory;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
@@ -104,8 +105,8 @@ public class AccountServiceImplTest {
 
         Page<LedgerEntry> ledgerPage = new PageImpl<>(List.of(entry1, entry2), pageable, 2);
         when(accountRepository.existsById(accountId)).thenReturn(true);
-        when(ledgerEntryRepository.findByAccountId(accountId, pageable)).thenReturn(ledgerPage);
-        Page<TransactionHistory> response = accountService.getTransactionHistory(accountId, pageable);
+        when(ledgerEntryRepository.findByAccountIdOrderByCreatedAtDesc(accountId, pageable)).thenReturn(ledgerPage);
+        PageDTO<TransactionHistory> response = accountService.getTransactionHistory(accountId, pageable);
         assertNotNull(response);
         assertEquals(2, response.getContent().size());
 
@@ -115,7 +116,7 @@ public class AccountServiceImplTest {
         assertEquals(new BigDecimal("500.00"), first.amount());
         assertEquals(new BigDecimal("1500.00"), first.balanceAfter());
         verify(accountRepository).existsById(accountId);
-        verify(ledgerEntryRepository).findByAccountId(accountId, pageable);
+        verify(ledgerEntryRepository).findByAccountIdOrderByCreatedAtDesc(accountId, pageable);
     }
 
     @Test
@@ -124,13 +125,13 @@ public class AccountServiceImplTest {
         Pageable pageable = PageRequest.of(0, 20);
         Page<LedgerEntry> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
         when(accountRepository.existsById(accountId)).thenReturn(true);
-        when(ledgerEntryRepository.findByAccountId(accountId, pageable)).thenReturn(emptyPage);
-        Page<TransactionHistory> response = accountService.getTransactionHistory(accountId, pageable);
+        when(ledgerEntryRepository.findByAccountIdOrderByCreatedAtDesc(accountId, pageable)).thenReturn(emptyPage);
+        PageDTO<TransactionHistory> response = accountService.getTransactionHistory(accountId, pageable);
         assertNotNull(response);
-        assertTrue(response.isEmpty());
+        assertTrue(response.getContent().isEmpty());
         assertEquals(0, response.getTotalElements());
         verify(accountRepository).existsById(accountId);
-        verify(ledgerEntryRepository).findByAccountId(accountId, pageable);
+        verify(ledgerEntryRepository).findByAccountIdOrderByCreatedAtDesc(accountId, pageable);
     }
 
     @Test
