@@ -135,5 +135,7 @@ response:
     java -jar transaction-core-1.0.0.jar
 
     I have also enabled swagger UI , we can access the API Docs by http://localhost:8080/swagger-ui/index.html
+    
+    I have added placeholder to add JWT validation and initialize the security context.
 
 The unit test runs without Spring or PostgreSQL.
