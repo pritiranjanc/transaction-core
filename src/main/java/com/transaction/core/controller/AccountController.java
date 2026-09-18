@@ -6,7 +6,8 @@ import com.transaction.core.dto.response.TransactionHistory;
 import com.transaction.core.service.AccountService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,12 +22,13 @@ public class AccountController {
     public PageDTO<TransactionHistory> getTransactionHistory(
             @PathVariable Long accountId, @RequestParam(required = false,name = "page",defaultValue = "0") Integer page,
             @RequestParam(required = false,name = "page-size", defaultValue = "10") Integer pageSize) {
-        return accountService.getTransactionHistory(accountId, Pageable.ofSize(pageSize).withPage(page));
+        return accountService.getTransactionHistory(accountId,
+                PageRequest.of(page,pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
     }
 
     @GetMapping("/{accountId}/balance")
     public AccountDTO getBalance(@PathVariable Long accountId) {
-        return accountService.getAccount(accountId);
+        return accountService.getAccountBalance(accountId);
     }
 
 }
