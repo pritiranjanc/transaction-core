@@ -81,27 +81,13 @@ public class AccountServiceImplTest {
     void shouldReturnTransactionHistorySuccessfully() {
         Long accountId = 1L;
         Pageable pageable = PageRequest.of(0,20, Sort.by(Sort.Direction.DESC, "createdAt"));
-        LedgerEntry entry1 = LedgerEntry.builder()
-                .id(101L)
-                .account(account)
-                .entryType(EntryType.CREDIT)
-                .amount(new BigDecimal("500.00"))
-                .balanceAfter(new BigDecimal("1500.00"))
-                .createdAt(LocalDateTime.now())
-                .transaction(Transaction.builder().transactionType(TransactionType.DEPOSIT).id(101L)
-                        .reference(UUID.randomUUID()).status(TransactionStatus.COMPLETED).build())
-                .build();
+        LedgerEntry entry1 = getLedgerEntry(101L,account,EntryType.CREDIT,
+                new BigDecimal("500.00"),new BigDecimal("1500.00"),
+                getTransaction(101L,TransactionType.DEPOSIT));
 
-        LedgerEntry entry2 = LedgerEntry.builder()
-                .id(102L)
-                .account(account)
-                .entryType(EntryType.DEBIT)
-                .amount(new BigDecimal("200.00"))
-                .balanceAfter(new BigDecimal("1000.00"))
-                .createdAt(LocalDateTime.now().minusMinutes(10))
-                .transaction(Transaction.builder().transactionType(TransactionType.WITHDRAWAL)
-                        .reference(UUID.randomUUID()).status(TransactionStatus.COMPLETED).build())
-                .build();
+        LedgerEntry entry2 = getLedgerEntry(102L,account,EntryType.DEBIT,
+                new BigDecimal("200.00"),new BigDecimal("1000.00"),
+                getTransaction(102L,TransactionType.WITHDRAWAL));
 
         Page<LedgerEntry> ledgerPage = new PageImpl<>(List.of(entry1, entry2), pageable, 2);
         when(accountRepository.existsById(accountId)).thenReturn(true);
@@ -118,6 +104,8 @@ public class AccountServiceImplTest {
         verify(accountRepository).existsById(accountId);
         verify(ledgerEntryRepository).findByAccountId(accountId, pageable);
     }
+
+
 
     @Test
     void shouldReturnEmptyTransactionHistoryWhenNoTransactionsExist() {
@@ -143,4 +131,27 @@ public class AccountServiceImplTest {
         verify(accountRepository).existsById(accountId);
     }
 
+    private LedgerEntry getLedgerEntry(
+            Long id,Account account,EntryType type,
+            BigDecimal amount,BigDecimal balanceAfter,
+            Transaction transaction) {
+        return LedgerEntry.builder()
+                .id(id)
+                .account(account)
+                .entryType(type)
+                .amount(amount)
+                .balanceAfter(balanceAfter)
+                .createdAt(LocalDateTime.now())
+                .transaction(transaction)
+                .build();
+    }
+
+    private Transaction getTransaction(Long id,TransactionType type){
+        return Transaction.builder()
+                .id(id)
+                .transactionType(type)
+                .reference(UUID.randomUUID())
+                .status(TransactionStatus.COMPLETED)
+                .build();
+    }
 }
