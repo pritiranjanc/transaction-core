@@ -10,7 +10,7 @@ public record Transfer(
         Long fromAccountId,
         @NotNull(message = "AccountId can not be null")
         Long toAccountId,
-        @NotNull(message = "AccountId can not be null")
+        @NotNull(message = "Amount can not be null")
         @DecimalMin(value = "0.01",message = "Amount must be greater than zero")
         BigDecimal amount
 ) {
