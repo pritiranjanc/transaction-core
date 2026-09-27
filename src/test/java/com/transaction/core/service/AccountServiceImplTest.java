@@ -2,14 +2,12 @@ package com.transaction.core.service;
 
 import com.transaction.core.constants.AccountStatus;
 import com.transaction.core.constants.EntryType;
-import com.transaction.core.constants.TransactionStatus;
 import com.transaction.core.constants.TransactionType;
 import com.transaction.core.dto.response.AccountDTO;
 import com.transaction.core.dto.response.PageDTO;
 import com.transaction.core.dto.response.TransactionHistory;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
-import com.transaction.core.entity.Transaction;
 import com.transaction.core.exception.AccountNotFoundException;
 import com.transaction.core.repository.AccountRepository;
 import com.transaction.core.repository.LedgerEntryRepository;
@@ -22,12 +20,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+import static com.transaction.core.utils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,13 +45,7 @@ public class AccountServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        account = Account.builder()
-                .id(1L)
-                .accountNumber("ACC001")
-                .balance(new BigDecimal("1500.00"))
-                .currency("USD")
-                .status(AccountStatus.ACTIVE.name())
-                .build();
+        account = getAccount();
     }
 
     @Test
@@ -131,27 +122,5 @@ public class AccountServiceImplTest {
         verify(accountRepository).existsById(accountId);
     }
 
-    private LedgerEntry getLedgerEntry(
-            Long id,Account account,EntryType type,
-            BigDecimal amount,BigDecimal balanceAfter,
-            Transaction transaction) {
-        return LedgerEntry.builder()
-                .id(id)
-                .account(account)
-                .entryType(type)
-                .amount(amount)
-                .balanceAfter(balanceAfter)
-                .createdAt(LocalDateTime.now())
-                .transaction(transaction)
-                .build();
-    }
 
-    private Transaction getTransaction(Long id,TransactionType type){
-        return Transaction.builder()
-                .id(id)
-                .transactionType(type)
-                .reference(UUID.randomUUID())
-                .status(TransactionStatus.COMPLETED)
-                .build();
-    }
 }
