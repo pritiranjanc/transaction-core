@@ -94,9 +94,9 @@ public class AccountServiceImplTest {
         when(ledgerEntryRepository.findByAccountId(accountId, pageable)).thenReturn(ledgerPage);
         PageDTO<TransactionHistory> response = accountService.getTransactionHistory(accountId, pageable);
         assertNotNull(response);
-        assertEquals(2, response.getContent().size());
+        assertEquals(2, response.content().size());
 
-        TransactionHistory first = response.getContent().getFirst();
+        TransactionHistory first = response.content().getFirst();
         assertEquals(101L, first.transactionId());
         assertEquals(EntryType.CREDIT.name(), first.entryType());
         assertEquals(new BigDecimal("500.00"), first.amount());
@@ -116,8 +116,8 @@ public class AccountServiceImplTest {
         when(ledgerEntryRepository.findByAccountId(accountId, pageable)).thenReturn(emptyPage);
         PageDTO<TransactionHistory> response = accountService.getTransactionHistory(accountId, pageable);
         assertNotNull(response);
-        assertTrue(response.getContent().isEmpty());
-        assertEquals(0, response.getTotalElements());
+        assertTrue(response.content().isEmpty());
+        assertEquals(0, response.totalElements());
         verify(accountRepository).existsById(accountId);
         verify(ledgerEntryRepository).findByAccountId(accountId, pageable);
     }
