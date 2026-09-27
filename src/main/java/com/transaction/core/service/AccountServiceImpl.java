@@ -32,12 +32,12 @@ public class AccountServiceImpl implements AccountService{
             throw new AccountNotFoundException(accountId);
         }
         Page<LedgerEntry> page = ledgerEntryRepository.findByAccountId(accountId, pageable);
-        List<TransactionHistory> transactionHistories =  page.getContent()
+        List<TransactionHistory> transactions =  page.getContent()
                 .stream()
                 .map(TransactionHistory::from)
                 .toList();
         log.info("Completed Transaction History: accountId={}", accountId);
-        return PageDTO.from(transactionHistories,page.getTotalPages(),page.getNumber(),page.getSize(), page.getTotalElements());
+        return PageDTO.from(transactions,page.getTotalPages(),page.getNumber(),page.getSize(), page.getTotalElements());
     }
 
     @Override
