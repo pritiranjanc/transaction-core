@@ -43,8 +43,7 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public AccountDTO getAccountBalance(Long accountId) {
         log.info("Starting getAccount Balance : accountId={}", accountId);
-        Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new AccountNotFoundException(accountId));
+        Account account = accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
         log.info("Completed getAccount Balance : accountId={}", accountId);
         return AccountDTO.from(account);
     }
