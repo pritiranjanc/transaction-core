@@ -37,7 +37,7 @@ public class AccountServiceImpl implements AccountService{
                 .map(TransactionHistory::from)
                 .toList();
         log.info("Completed Transaction History: accountId={}", accountId);
-        return PageDTO.buildPage(transactionHistories,page.getTotalPages(),page.getNumber(),page.getSize(), page.getTotalElements());
+        return PageDTO.from(transactionHistories,page.getTotalPages(),page.getNumber(),page.getSize(), page.getTotalElements());
     }
 
     @Override
