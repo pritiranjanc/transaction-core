@@ -1,7 +1,11 @@
 package com.transaction.core.dto.response;
 
+import com.transaction.core.entity.Account;
+import lombok.Builder;
+
 import java.math.BigDecimal;
 
+@Builder
 public record AccountDTO(
         Long accountId,
         String accountNumber,
@@ -9,4 +13,13 @@ public record AccountDTO(
         String currency,
         String status
 ){
+    public static AccountDTO buildAccountResponse(Account account){
+        return AccountDTO.builder()
+                .accountId(account.getId())
+                .accountNumber("*".repeat(4) + account.getAccountNumber().substring(4))
+                .balance(account.getBalance())
+                .currency(account.getCurrency())
+                .status(account.getStatus())
+                .build();
+    }
 }

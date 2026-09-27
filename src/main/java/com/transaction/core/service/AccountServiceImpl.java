@@ -35,16 +35,10 @@ public class AccountServiceImpl implements AccountService{
         Page<LedgerEntry> entries = ledgerEntryRepository.findByAccountId(accountId, pageable);
         List<TransactionHistory> transactionHistories =  entries.getContent()
                 .stream()
-                .map(this::toResponse)
+                .map(TransactionHistory::toResponse)
                 .toList();
         log.info("Completed Transaction History: accountId={}", accountId);
-        return PageDTO.<TransactionHistory>builder()
-                .content(transactionHistories)
-                .page(entries.getNumber())
-                .size(entries.getSize())
-                .totalElements(entries.getTotalElements())
-                .totalPages(entries.getTotalPages())
-                .build();
+        return PageDTO.buildPage(transactionHistories,entries);
     }
 
     @Override
@@ -53,15 +47,9 @@ public class AccountServiceImpl implements AccountService{
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException(accountId));
         log.info("Completed getAccount Balance : accountId={}", accountId);
-        return new AccountDTO(account.getId(), "*".repeat(4) + account.getAccountNumber().substring(4),
-                account.getBalance(), account.getCurrency(), account.getStatus());
+        return AccountDTO.buildAccountResponse(account);
     }
 
-    private TransactionHistory toResponse(LedgerEntry entry) {
-        Transaction transaction = entry.getTransaction();
-        return new TransactionHistory(transaction.getId(), transaction.getReference(),
-                transaction.getTransactionType().name(), entry.getEntryType().name(),
-                entry.getAmount(), entry.getBalanceAfter(), entry.getCreatedAt());
-    }
+
 
 }
