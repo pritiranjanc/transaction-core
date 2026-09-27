@@ -18,7 +18,7 @@ public record TransactionHistory(
         BigDecimal balanceAfter,
         LocalDateTime createdAt){
 
-    public static TransactionHistory toResponse(LedgerEntry entry) {
+    public static TransactionHistory from(LedgerEntry entry) {
         Transaction transaction = entry.getTransaction();
         return TransactionHistory.builder()
                 .transactionId(transaction.getId())

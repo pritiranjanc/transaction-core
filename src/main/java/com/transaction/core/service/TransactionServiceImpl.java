@@ -124,7 +124,7 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
     private Transaction createTransaction(TransactionType type, BigDecimal amount) {
-        return com.transaction.core.entity.Transaction.builder()
+        return Transaction.builder()
                 .transactionType(type)
                 .amount(amount)
                 .status(TransactionStatus.COMPLETED)

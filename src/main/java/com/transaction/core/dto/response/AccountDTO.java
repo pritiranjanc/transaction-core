@@ -13,7 +13,7 @@ public record AccountDTO(
         String currency,
         String status
 ){
-    public static AccountDTO buildAccountResponse(Account account){
+    public static AccountDTO from(Account account){
         return AccountDTO.builder()
                 .accountId(account.getId())
                 .accountNumber("*".repeat(4) + account.getAccountNumber().substring(4))
