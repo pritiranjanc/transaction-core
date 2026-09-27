@@ -23,17 +23,17 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping("/deposit")
-    public TransactionDTO deposit(@Valid @RequestBody Deposit request) {
+    public TransactionDTO processDeposit(@Valid @RequestBody Deposit request) {
         return transactionService.processDeposit(request.accountId(), request.amount());
     }
 
     @PostMapping("/withdraw")
-    public TransactionDTO withdraw(@Valid @RequestBody Withdraw request) {
+    public TransactionDTO processWithdrawal(@Valid @RequestBody Withdraw request) {
         return transactionService.processWithdrawal(request.accountId(), request.amount());
     }
 
     @PostMapping("/transfer")
-    public TransactionDTO transfer(@Valid @RequestBody Transfer request) {
+    public TransactionDTO processTransfer(@Valid @RequestBody Transfer request) {
         return transactionService.processTransfer(request.fromAccountId(), request.toAccountId(), request.amount());
     }
 
