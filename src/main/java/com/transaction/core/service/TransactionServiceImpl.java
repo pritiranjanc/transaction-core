@@ -37,8 +37,7 @@ public class TransactionServiceImpl implements TransactionService{
     public TransactionDTO processDeposit(Long accountId, BigDecimal amount) {
         log.info("Starting deposit: accountId={}, amount={}", accountId, amount);
         validateAmount(amount);
-        Account account = accountRepository.findByIdForUpdate(accountId)
-                .orElseThrow(() -> new AccountNotFoundException(accountId));
+        Account account = accountRepository.findByIdForUpdate(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
         validateAccount(account);
         account.setBalance(account.getBalance().add(amount));
         Transaction transaction = createTransaction(TransactionType.DEPOSIT, amount);
@@ -53,8 +52,7 @@ public class TransactionServiceImpl implements TransactionService{
     public TransactionDTO processWithdrawal(Long accountId, BigDecimal amount) {
         log.info("Starting withdrawal: accountId={}, amount={}", accountId, amount);
         validateAmount(amount);
-        Account account = accountRepository.findByIdForUpdate(accountId)
-                .orElseThrow(() -> new AccountNotFoundException(accountId));
+        Account account = accountRepository.findByIdForUpdate(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
         validateAccount(account);
         if (account.getBalance().compareTo(amount) < 0) {
             log.warn("Withdrawal rejected due to insufficient balance: accountId={}", accountId);
@@ -84,10 +82,8 @@ public class TransactionServiceImpl implements TransactionService{
          */
         Long firstId = Math.min(fromAccountId, toAccountId);
         Long secondId = Math.max(fromAccountId, toAccountId);
-        Account first = accountRepository.findByIdForUpdate(firstId)
-                .orElseThrow(() -> new AccountNotFoundException(firstId));
-        Account second = accountRepository.findByIdForUpdate(secondId)
-                .orElseThrow(() -> new AccountNotFoundException(secondId));
+        Account first = accountRepository.findByIdForUpdate(firstId).orElseThrow(() -> new AccountNotFoundException(firstId));
+        Account second = accountRepository.findByIdForUpdate(secondId).orElseThrow(() -> new AccountNotFoundException(secondId));
 
         Account source = fromAccountId.equals(firstId) ? first : second;
         Account destination = toAccountId.equals(firstId) ? first : second;
