@@ -5,7 +5,6 @@ import com.transaction.core.dto.response.PageDTO;
 import com.transaction.core.dto.response.TransactionHistory;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
-import com.transaction.core.entity.Transaction;
 import com.transaction.core.exception.AccountNotFoundException;
 import com.transaction.core.repository.AccountRepository;
 import com.transaction.core.repository.LedgerEntryRepository;
@@ -32,13 +31,13 @@ public class AccountServiceImpl implements AccountService{
         if (!accountRepository.existsById(accountId)) {
             throw new AccountNotFoundException(accountId);
         }
-        Page<LedgerEntry> entries = ledgerEntryRepository.findByAccountId(accountId, pageable);
-        List<TransactionHistory> transactionHistories =  entries.getContent()
+        Page<LedgerEntry> page = ledgerEntryRepository.findByAccountId(accountId, pageable);
+        List<TransactionHistory> transactionHistories =  page.getContent()
                 .stream()
                 .map(TransactionHistory::toResponse)
                 .toList();
         log.info("Completed Transaction History: accountId={}", accountId);
-        return PageDTO.buildPage(transactionHistories,entries);
+        return PageDTO.buildPage(transactionHistories,page.getTotalPages(),page.getNumber(),page.getSize(), page.getTotalElements());
     }
 
     @Override

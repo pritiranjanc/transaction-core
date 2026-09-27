@@ -123,7 +123,7 @@ public class TransactionServiceImpl implements TransactionService{
         }
     }
 
-    private com.transaction.core.entity.Transaction createTransaction(TransactionType type, BigDecimal amount) {
+    private Transaction createTransaction(TransactionType type, BigDecimal amount) {
         return com.transaction.core.entity.Transaction.builder()
                 .transactionType(type)
                 .amount(amount)
@@ -132,7 +132,7 @@ public class TransactionServiceImpl implements TransactionService{
                 .build();
     }
 
-    private void createLedgerEntry(com.transaction.core.entity.Transaction transaction, Account account, EntryType entryType, BigDecimal amount) {
+    private void createLedgerEntry(Transaction transaction, Account account, EntryType entryType, BigDecimal amount) {
         LedgerEntry entry = LedgerEntry.builder()
                 .transaction(transaction)
                 .account(account)

@@ -3,7 +3,6 @@ package com.transaction.core.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -17,13 +16,13 @@ public class PageDTO<T> {
     private long totalElements;
     private int totalPages;
 
-    public static <T> PageDTO<T> buildPage(List<T> content, Page<?> page){
+    public static <T> PageDTO<T> buildPage(List<T> content, int totalPages,int page ,int size,long totalElements){
         return PageDTO.<T>builder()
                 .content(content)
-                .totalPages(page.getTotalPages())
-                .page(page.getNumber())
-                .totalElements(page.getTotalElements())
-                .size(page.getSize())
+                .totalPages(totalPages)
+                .page(page)
+                .totalElements(totalElements)
+                .size(size)
                 .build();
     }
 }
