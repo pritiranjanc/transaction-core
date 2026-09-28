@@ -1,5 +1,6 @@
 package com.transaction.core.entity;
 
+import com.transaction.core.constants.AccountStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -31,8 +32,9 @@ public class Account {
     @Column(nullable = false, length = 3)
     private String currency;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private AccountStatus status;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

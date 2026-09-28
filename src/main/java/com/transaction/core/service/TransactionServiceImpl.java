@@ -114,7 +114,7 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
     private void validateAccount(Account account) {
-        if (!AccountStatus.ACTIVE.name().equals(account.getStatus())) {
+        if (!AccountStatus.ACTIVE.name().equals(account.getStatus().name())) {
             throw new InvalidTransactionException("Account is not active");
         }
     }

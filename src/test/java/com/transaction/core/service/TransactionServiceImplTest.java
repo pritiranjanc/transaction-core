@@ -52,7 +52,7 @@ public class TransactionServiceImplTest {
                 .accountNumber("ACC001")
                 .balance(new BigDecimal("1000.00"))
                 .currency("USD")
-                .status("ACTIVE")
+                .status(AccountStatus.ACTIVE)
                 .build();
 
         destinationAccount = Account.builder()
@@ -60,7 +60,7 @@ public class TransactionServiceImplTest {
                 .accountNumber("ACC002")
                 .balance(new BigDecimal("500.00"))
                 .currency("USD")
-                .status("ACTIVE")
+                .status(AccountStatus.ACTIVE)
                 .build();
     }
 
@@ -183,7 +183,7 @@ public class TransactionServiceImplTest {
 
     @Test
     void shouldRejectTransactionForBlockedAccount() {
-        sourceAccount.setStatus(AccountStatus.BLOCKED.name());
+        sourceAccount.setStatus(AccountStatus.BLOCKED);
         when(accountRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(sourceAccount));
         Assertions.assertThrows(InvalidTransactionException.class, () -> transactionService.processDeposit(1L,
                 new BigDecimal("100.00")));

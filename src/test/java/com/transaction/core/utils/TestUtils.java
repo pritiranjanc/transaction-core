@@ -43,7 +43,7 @@ public class TestUtils {
                 .accountNumber("ACC001")
                 .balance(new BigDecimal("1500.00"))
                 .currency("USD")
-                .status(AccountStatus.ACTIVE.name())
+                .status(AccountStatus.ACTIVE)
                 .build();
     }
 

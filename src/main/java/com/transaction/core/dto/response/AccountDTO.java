@@ -19,7 +19,7 @@ public record AccountDTO(
                 .accountNumber("*".repeat(4) + account.getAccountNumber().substring(4))
                 .balance(account.getBalance())
                 .currency(account.getCurrency())
-                .status(account.getStatus())
+                .status(account.getStatus().name())
                 .build();
     }
 }
