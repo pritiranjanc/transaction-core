@@ -35,6 +35,8 @@ public class TestUtils {
                 .transactionType(type)
                 .reference(UUID.randomUUID())
                 .status(TransactionStatus.COMPLETED)
+                .amount(BigDecimal.TEN)
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 
@@ -45,6 +47,8 @@ public class TestUtils {
                 .balance(new BigDecimal("1500.00"))
                 .currency("USD")
                 .status(AccountStatus.ACTIVE)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 
