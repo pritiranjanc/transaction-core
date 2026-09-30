@@ -31,8 +31,8 @@ public class LedgerEntryRepositoryTest {
 
     @Autowired
     private AccountRepository accountRepository;
-
     private Account account;
+
     @BeforeEach
     void prepareTest(){
         account = TestUtils.getAccount();
