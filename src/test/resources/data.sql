@@ -1,13 +1,13 @@
 
 INSERT INTO accounts
-    (account_number,balance,currency,status)
+    (account_number,type,balance,currency,status)
 VALUES
-    ('ACC001',1500.00,'INR','ACTIVE');
+    ('ACC001','SAVINGS',1500.00,'INR','ACTIVE');
 
 INSERT INTO accounts
-    (account_number,balance,currency,status)
+    (account_number,type,balance,currency,status)
 VALUES
-    ('ACC002',500.00,'INR','ACTIVE');
+    ('ACC002','SAVINGS',500.00,'INR','ACTIVE');
 
 INSERT INTO transactions
     (transaction_type,amount,status,reference)

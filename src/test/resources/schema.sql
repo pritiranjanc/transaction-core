@@ -1,6 +1,7 @@
 CREATE TABLE accounts (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     account_number  VARCHAR(50) NOT NULL UNIQUE,
+    type            VARCHAR(20) NOT NULL DEFAULT 'SAVINGS',
     balance         NUMERIC(19, 2) NOT NULL DEFAULT 0,
     currency        CHAR(3) NOT NULL DEFAULT 'INR',
     status          VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',

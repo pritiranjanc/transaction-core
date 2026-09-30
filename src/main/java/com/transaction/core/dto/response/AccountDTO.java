@@ -11,7 +11,8 @@ public record AccountDTO(
         String accountNumber,
         BigDecimal balance,
         String currency,
-        String status
+        String status,
+        String type
 ){
     public static AccountDTO from(Account account){
         return AccountDTO.builder()
@@ -20,6 +21,7 @@ public record AccountDTO(
                 .balance(account.getBalance())
                 .currency(account.getCurrency())
                 .status(account.getStatus().name())
+                .type(account.getType())
                 .build();
     }
 }

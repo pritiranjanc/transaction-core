@@ -28,6 +28,9 @@ public class Account {
     @Column(name = "account_number", nullable = false, unique = true)
     private String accountNumber;
 
+    @Column(name = "type", nullable = false)
+    private String type;
+
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal balance;
 
