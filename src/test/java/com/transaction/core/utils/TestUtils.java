@@ -1,9 +1,6 @@
 package com.transaction.core.utils;
 
-import com.transaction.core.constants.AccountStatus;
-import com.transaction.core.constants.EntryType;
-import com.transaction.core.constants.TransactionStatus;
-import com.transaction.core.constants.TransactionType;
+import com.transaction.core.constants.*;
 import com.transaction.core.dto.response.AccountDTO;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
@@ -49,6 +46,7 @@ public class TestUtils {
                 .status(AccountStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+                .type(AccountType.SAVINGS)
                 .build();
     }
 
