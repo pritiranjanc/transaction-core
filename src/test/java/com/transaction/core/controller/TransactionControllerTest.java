@@ -29,11 +29,7 @@ public class TransactionControllerTest {
             "amount": "100"
         }
         """;
-        mockMvc.perform(
-                        post("/api/v1/transactions/withdraw")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(requestBody)
-                )
+        mockMvc.perform(post("/api/v1/transactions/withdraw").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transactionType").value(TransactionType.WITHDRAWAL.name()))
                 .andExpect(jsonPath("$.status").value(TransactionStatus.COMPLETED.name()))
@@ -48,11 +44,7 @@ public class TransactionControllerTest {
             "amount": "100"
         }
         """;
-        mockMvc.perform(
-                        post("/api/v1/transactions/deposit")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(requestBody)
-                )
+        mockMvc.perform(post("/api/v1/transactions/deposit").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transactionType").value(TransactionType.DEPOSIT.name()))
                 .andExpect(jsonPath("$.status").value(TransactionStatus.COMPLETED.name()))
@@ -69,11 +61,7 @@ public class TransactionControllerTest {
             "amount": "100"
         }
         """;
-        mockMvc.perform(
-                        post("/api/v1/transactions/transfer")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(requestBody)
-                )
+        mockMvc.perform(post("/api/v1/transactions/transfer").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transactionType").value(TransactionType.TRANSFER.name()))
                 .andExpect(jsonPath("$.status").value(TransactionStatus.COMPLETED.name()))
