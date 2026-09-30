@@ -4,6 +4,7 @@ import com.transaction.core.constants.AccountStatus;
 import com.transaction.core.constants.EntryType;
 import com.transaction.core.constants.TransactionStatus;
 import com.transaction.core.constants.TransactionType;
+import com.transaction.core.dto.response.AccountDTO;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
 import com.transaction.core.entity.Transaction;
@@ -45,6 +46,10 @@ public class TestUtils {
                 .currency("USD")
                 .status(AccountStatus.ACTIVE)
                 .build();
+    }
+
+    public static AccountDTO getAccountDTO(){
+        return AccountDTO.from(getAccount());
     }
 
 }
