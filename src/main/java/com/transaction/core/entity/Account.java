@@ -1,6 +1,7 @@
 package com.transaction.core.entity;
 
 import com.transaction.core.constants.AccountStatus;
+import com.transaction.core.constants.AccountType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -28,8 +29,9 @@ public class Account {
     @Column(name = "account_number", nullable = false, unique = true)
     private String accountNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private String type;
+    private AccountType type;
 
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal balance;

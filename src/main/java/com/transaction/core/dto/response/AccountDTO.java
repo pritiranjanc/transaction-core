@@ -21,7 +21,7 @@ public record AccountDTO(
                 .balance(account.getBalance())
                 .currency(account.getCurrency())
                 .status(account.getStatus().name())
-                .type(account.getType())
+                .type(account.getType().name())
                 .build();
     }
 }
