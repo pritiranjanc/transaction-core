@@ -1,7 +1,6 @@
 package com.transaction.core.utils;
 
 import com.transaction.core.constants.*;
-import com.transaction.core.dto.response.AccountDTO;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
 import com.transaction.core.entity.Transaction;
@@ -50,8 +49,5 @@ public class TestUtils {
                 .build();
     }
 
-    public static AccountDTO getAccountDTO(){
-        return AccountDTO.from(getAccount());
-    }
 
 }
