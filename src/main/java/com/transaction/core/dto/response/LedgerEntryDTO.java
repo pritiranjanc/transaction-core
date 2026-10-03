@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Builder
-public record TransactionHistory(
+public record LedgerEntryDTO(
         Long transactionId,
         UUID reference,
         String transactionType,
@@ -18,9 +18,9 @@ public record TransactionHistory(
         BigDecimal balanceAfter,
         LocalDateTime createdAt){
 
-    public static TransactionHistory from(LedgerEntry entry) {
+    public static LedgerEntryDTO from(LedgerEntry entry) {
         Transaction transaction = entry.getTransaction();
-        return TransactionHistory.builder()
+        return LedgerEntryDTO.builder()
                 .transactionId(transaction.getId())
                 .reference(transaction.getReference())
                 .transactionType(transaction.getTransactionType().name())

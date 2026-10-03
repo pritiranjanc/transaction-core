@@ -5,7 +5,7 @@ import com.transaction.core.constants.EntryType;
 import com.transaction.core.constants.TransactionType;
 import com.transaction.core.dto.response.AccountDTO;
 import com.transaction.core.dto.response.PageDTO;
-import com.transaction.core.dto.response.TransactionHistory;
+import com.transaction.core.dto.response.LedgerEntryDTO;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
 import com.transaction.core.exception.AccountNotFoundException;
@@ -83,11 +83,11 @@ public class AccountServiceImplTest {
         Page<LedgerEntry> ledgerPage = new PageImpl<>(List.of(entry1, entry2), pageable, 2);
         when(accountRepository.existsById(accountId)).thenReturn(true);
         when(ledgerEntryRepository.findByAccountId(accountId, pageable)).thenReturn(ledgerPage);
-        PageDTO<TransactionHistory> response = accountService.getTransactionHistory(accountId, pageable);
+        PageDTO<LedgerEntryDTO> response = accountService.getTransactionHistory(accountId, pageable);
         assertNotNull(response);
         assertEquals(2, response.content().size());
 
-        TransactionHistory first = response.content().getFirst();
+        LedgerEntryDTO first = response.content().getFirst();
         assertEquals(101L, first.transactionId());
         assertEquals(EntryType.CREDIT.name(), first.entryType());
         assertEquals(new BigDecimal("500.00"), first.amount());
@@ -105,7 +105,7 @@ public class AccountServiceImplTest {
         Page<LedgerEntry> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
         when(accountRepository.existsById(accountId)).thenReturn(true);
         when(ledgerEntryRepository.findByAccountId(accountId, pageable)).thenReturn(emptyPage);
-        PageDTO<TransactionHistory> response = accountService.getTransactionHistory(accountId, pageable);
+        PageDTO<LedgerEntryDTO> response = accountService.getTransactionHistory(accountId, pageable);
         assertNotNull(response);
         assertTrue(response.content().isEmpty());
         assertEquals(0, response.totalElements());

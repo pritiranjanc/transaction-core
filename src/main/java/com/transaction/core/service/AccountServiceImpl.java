@@ -2,7 +2,7 @@ package com.transaction.core.service;
 
 import com.transaction.core.dto.response.AccountDTO;
 import com.transaction.core.dto.response.PageDTO;
-import com.transaction.core.dto.response.TransactionHistory;
+import com.transaction.core.dto.response.LedgerEntryDTO;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
 import com.transaction.core.exception.AccountNotFoundException;
@@ -26,15 +26,15 @@ public class AccountServiceImpl implements AccountService{
     private final LedgerEntryRepository ledgerEntryRepository;
 
     @Override
-    public PageDTO<TransactionHistory> getTransactionHistory(Long accountId, Pageable pageable) {
+    public PageDTO<LedgerEntryDTO> getTransactionHistory(Long accountId, Pageable pageable) {
         log.info("Starting Transaction History: accountId={}", accountId);
         if (!accountRepository.existsById(accountId)) {
             throw new AccountNotFoundException(accountId);
         }
         Page<LedgerEntry> page = ledgerEntryRepository.findByAccountId(accountId, pageable);
-        List<TransactionHistory> transactions =  page.getContent()
+        List<LedgerEntryDTO> transactions =  page.getContent()
                 .stream()
-                .map(TransactionHistory::from)
+                .map(LedgerEntryDTO::from)
                 .toList();
         log.info("Completed Transaction History: accountId={}", accountId);
         return PageDTO.from(transactions,page.getTotalPages(),page.getNumber(),page.getSize(), page.getTotalElements());

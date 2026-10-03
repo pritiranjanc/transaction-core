@@ -1,6 +1,6 @@
 package com.transaction.core.dto.response;
 
-public record Error(
+public record ErrorDTO(
         String code,
         String message
 ) {

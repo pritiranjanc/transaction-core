@@ -1,6 +1,6 @@
 package com.transaction.core.config;
 
-import com.transaction.core.dto.response.Error;
+import com.transaction.core.dto.response.ErrorDTO;
 import com.transaction.core.exception.AccountNotFoundException;
 import com.transaction.core.exception.InsufficientBalanceException;
 import com.transaction.core.exception.InvalidTransactionException;
@@ -17,24 +17,24 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccountNotFoundException.class)
-    ResponseEntity<Error> handleAccountNotFound(AccountNotFoundException ex) {
+    ResponseEntity<ErrorDTO> handleAccountNotFound(AccountNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(new Error("ACCOUNT_NOT_FOUND", ex.getMessage()));
+                .body(new ErrorDTO("ACCOUNT_NOT_FOUND", ex.getMessage()));
     }
 
     @ExceptionHandler(InsufficientBalanceException.class)
-    ResponseEntity<Error> handleInsufficientBalance(InsufficientBalanceException ex) {
+    ResponseEntity<ErrorDTO> handleInsufficientBalance(InsufficientBalanceException ex) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
-                .body(new Error("INSUFFICIENT_BALANCE", ex.getMessage()));
+                .body(new ErrorDTO("INSUFFICIENT_BALANCE", ex.getMessage()));
     }
 
     @ExceptionHandler(InvalidTransactionException.class)
-    ResponseEntity<Error> handleInvalidTransaction(InvalidTransactionException ex) {
+    ResponseEntity<ErrorDTO> handleInvalidTransaction(InvalidTransactionException ex) {
         return ResponseEntity
                 .badRequest()
-                .body(new Error("INVALID_TRANSACTION", ex.getMessage()));
+                .body(new ErrorDTO("INVALID_TRANSACTION", ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
