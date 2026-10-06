@@ -2,22 +2,20 @@ package com.transaction.core.entity;
 
 import com.transaction.core.constants.EntryType;
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ledger_entries")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@EntityListeners(AuditingEntityListener.class)
-public class LedgerEntry {
+@SuperBuilder
+public class LedgerEntry extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +39,4 @@ public class LedgerEntry {
     @Column(name = "balance_after", nullable = false, precision = 19, scale = 2)
     private BigDecimal balanceAfter;
 
-    @Column(name = "created_at", nullable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
 }
