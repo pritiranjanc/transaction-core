@@ -18,7 +18,7 @@ CREATE TABLE transactions (
     status            VARCHAR(20) NOT NULL DEFAULT 'COMPLETED',
     reference         UUID NOT NULL UNIQUE,
     created_at        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE ledger_entries (
@@ -29,7 +29,7 @@ CREATE TABLE ledger_entries (
     amount           NUMERIC(19, 2) NOT NULL,
     balance_after    NUMERIC(19, 2) NOT NULL,
     created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_ledger_transaction FOREIGN KEY (transaction_id) REFERENCES transactions(id),
     CONSTRAINT fk_ledger_account FOREIGN KEY (account_id) REFERENCES accounts(id),
