@@ -1,9 +1,6 @@
-package com.transaction.core.config;
+package com.transaction.core.exception;
 
 import com.transaction.core.dto.response.ErrorDTO;
-import com.transaction.core.exception.AccountNotFoundException;
-import com.transaction.core.exception.InsufficientBalanceException;
-import com.transaction.core.exception.InvalidTransactionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -40,7 +37,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<Map<String, String>> handleMethodArgument(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-
         ex.getBindingResult()
                 .getFieldErrors()
                 .forEach(error ->

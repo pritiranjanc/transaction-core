@@ -4,6 +4,7 @@ import com.transaction.core.dto.response.AccountDTO;
 import com.transaction.core.dto.response.PageDTO;
 import com.transaction.core.dto.response.LedgerEntryDTO;
 import com.transaction.core.service.AccountService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,7 @@ public class AccountController {
 
     private final AccountService accountService;
 
+    @Operation(description = "Get transaction history for an account",summary = "Get Transaction history")
     @GetMapping("/{accountId}/transactions")
     public PageDTO<LedgerEntryDTO> getTransactionHistory(
             @PathVariable Long accountId,
@@ -27,6 +29,7 @@ public class AccountController {
                 PageRequest.of(page,pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
     }
 
+    @Operation(description = "Get account balance for an account",summary = "Get Account balance")
     @GetMapping("/{accountId}/balance")
     public AccountDTO getBalance(@PathVariable Long accountId) {
         return accountService.getAccountBalance(accountId);
