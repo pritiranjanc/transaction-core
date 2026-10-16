@@ -21,7 +21,7 @@ public class LedgerEntry extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "transaction_id")
     private Transaction transaction;
 

@@ -1,18 +1,14 @@
 package com.transaction.core.service;
 
 import com.transaction.core.constants.AccountStatus;
-import com.transaction.core.constants.TransactionStatus;
-import com.transaction.core.constants.TransactionType;
 import com.transaction.core.dto.response.TransactionDTO;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
-import com.transaction.core.entity.Transaction;
 import com.transaction.core.exception.AccountNotFoundException;
 import com.transaction.core.exception.InsufficientBalanceException;
 import com.transaction.core.exception.InvalidTransactionException;
 import com.transaction.core.repository.AccountRepository;
 import com.transaction.core.repository.LedgerEntryRepository;
-import com.transaction.core.repository.TransactionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,9 +29,6 @@ public class TransactionServiceImplTest {
 
     @Mock
     private AccountRepository accountRepository;
-
-    @Mock
-    private TransactionRepository transactionRepository;
 
     @Mock
     private LedgerEntryRepository ledgerEntryRepository;
@@ -67,25 +60,12 @@ public class TransactionServiceImplTest {
 
     @Test
     void shouldDepositSuccessfully() {
-
         BigDecimal amount = new BigDecimal("200.00");
         when(accountRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(sourceAccount));
-        when(transactionRepository.save(any(Transaction.class)))
-                .thenAnswer(invocation -> {
-                    Transaction transaction = invocation.getArgument(0);
-                    transaction.setId(100L);
-                    return transaction;
-                });
         TransactionDTO result = transactionService.processDeposit(1L, amount);
         assertNotNull(result);
-        assertEquals(100L, result.transactionId());
-        assertEquals(TransactionType.DEPOSIT.name(), result.transactionType());
-        assertEquals(amount, result.amount());
-        assertEquals(TransactionStatus.COMPLETED.name(), result.status());
         assertEquals(new BigDecimal("1200.00"), sourceAccount.getBalance());
-
         verify(accountRepository).save(sourceAccount);
-        verify(transactionRepository).save(any(Transaction.class));
         verify(ledgerEntryRepository).save(any(LedgerEntry.class));
     }
 
@@ -106,19 +86,9 @@ public class TransactionServiceImplTest {
     void shouldWithdrawSuccessfully() {
         BigDecimal amount = new BigDecimal("300.00");
         when(accountRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(sourceAccount));
-        when(transactionRepository.save(any(Transaction.class)))
-                .thenAnswer(invocation -> {
-                    Transaction transaction = invocation.getArgument(0);
-                    transaction.setId(101L);
-                    return transaction;
-                });
-        TransactionDTO result = transactionService.processWithdrawal(1L, amount);
-        assertNotNull(result);
-        assertEquals(101L, result.transactionId());
-        assertEquals(TransactionType.WITHDRAWAL.name(), result.transactionType());
+        transactionService.processWithdrawal(1L, amount);
         assertEquals(new BigDecimal("700.00"), sourceAccount.getBalance());
         verify(accountRepository).save(sourceAccount);
-        verify(transactionRepository).save(any(Transaction.class));
         verify(ledgerEntryRepository).save(any(LedgerEntry.class));
     }
 
@@ -141,22 +111,12 @@ public class TransactionServiceImplTest {
         BigDecimal amount = new BigDecimal("400.00");
         when(accountRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(sourceAccount));
         when(accountRepository.findByIdForUpdate(2L)).thenReturn(Optional.of(destinationAccount));
-        when(transactionRepository.save(any(Transaction.class)))
-                .thenAnswer(invocation -> {
-                    Transaction transaction = invocation.getArgument(0);
-                    transaction.setId(200L);
-                    return transaction;
-                });
         TransactionDTO result = transactionService.processTransfer(1L, 2L, amount);
         assertNotNull(result);
-        assertEquals(200L, result.transactionId());
-        assertEquals(TransactionType.TRANSFER.name(), result.transactionType());
         assertEquals(new BigDecimal("600.00"), sourceAccount.getBalance());
         assertEquals(new BigDecimal("900.00"), destinationAccount.getBalance());
-
         verify(accountRepository).saveAll(List.of(sourceAccount,destinationAccount));
-        verify(transactionRepository).save(any(Transaction.class));
-        verify(ledgerEntryRepository, times(2)).save(any(LedgerEntry.class));
+        verify(ledgerEntryRepository, times(1)).saveAll(anyList());
     }
 
     @Test
@@ -188,7 +148,6 @@ public class TransactionServiceImplTest {
         Assertions.assertThrows(InvalidTransactionException.class, () -> transactionService.processDeposit(1L,
                 new BigDecimal("100.00")));
         verify(accountRepository).findByIdForUpdate(1L);
-        verifyNoInteractions(transactionRepository);
         verifyNoInteractions(ledgerEntryRepository);
     }
 

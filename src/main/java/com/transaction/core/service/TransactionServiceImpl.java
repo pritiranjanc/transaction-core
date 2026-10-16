@@ -13,7 +13,6 @@ import com.transaction.core.exception.InsufficientBalanceException;
 import com.transaction.core.exception.InvalidTransactionException;
 import com.transaction.core.repository.AccountRepository;
 import com.transaction.core.repository.LedgerEntryRepository;
-import com.transaction.core.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,6 @@ import java.util.UUID;
 @Slf4j
 public class TransactionServiceImpl implements TransactionService{
 
-    private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final LedgerEntryRepository ledgerEntryRepository;
 
@@ -42,8 +40,8 @@ public class TransactionServiceImpl implements TransactionService{
         validateAccount(account);
         account.setBalance(account.getBalance().add(amount));
         Transaction transaction = createTransaction(TransactionType.DEPOSIT, amount);
-        transactionRepository.save(transaction);
-        createLedgerEntry(transaction, account, EntryType.CREDIT, amount);
+        LedgerEntry entry =  createLedgerEntry(transaction, account, EntryType.CREDIT, amount);
+        ledgerEntryRepository.save(entry);
         accountRepository.save(account);
         log.info("Deposit completed: transactionId={}, accountId={}", transaction.getId(), accountId);
         return TransactionDTO.from(transaction);
@@ -61,8 +59,8 @@ public class TransactionServiceImpl implements TransactionService{
         }
         account.setBalance(account.getBalance().subtract(amount));
         Transaction transaction = createTransaction(TransactionType.WITHDRAWAL, amount);
-        transactionRepository.save(transaction);
-        createLedgerEntry(transaction, account, EntryType.DEBIT, amount);
+        LedgerEntry entry = createLedgerEntry(transaction, account, EntryType.DEBIT, amount);
+        ledgerEntryRepository.save(entry);
         accountRepository.save(account);
         log.info("Withdrawal completed: transactionId={}, accountId={}", transaction.getId(), accountId);
         return TransactionDTO.from(transaction);
@@ -99,9 +97,9 @@ public class TransactionServiceImpl implements TransactionService{
         source.setUpdatedAt(LocalDateTime.now());
         destination.setUpdatedAt(LocalDateTime.now());
         Transaction transaction = createTransaction(TransactionType.TRANSFER, amount);
-        transactionRepository.save(transaction);
-        createLedgerEntry(transaction, source, EntryType.DEBIT, amount);
-        createLedgerEntry(transaction, destination, EntryType.CREDIT, amount);
+        LedgerEntry debitEntry = createLedgerEntry(transaction, source, EntryType.DEBIT, amount);
+        LedgerEntry creditEntry = createLedgerEntry(transaction, destination, EntryType.CREDIT, amount);
+        ledgerEntryRepository.saveAll(List.of(debitEntry,creditEntry));
         accountRepository.saveAll(List.of(source,destination));
         log.info("Transfer completed: transactionId={}, fromAccountId={}, toAccountId={}", transaction.getId(), fromAccountId, toAccountId);
         return TransactionDTO.from(transaction);
@@ -128,14 +126,13 @@ public class TransactionServiceImpl implements TransactionService{
                 .build();
     }
 
-    private void createLedgerEntry(Transaction transaction, Account account, EntryType entryType, BigDecimal amount) {
-        LedgerEntry entry = LedgerEntry.builder()
+    private LedgerEntry createLedgerEntry(Transaction transaction, Account account, EntryType entryType, BigDecimal amount) {
+        return LedgerEntry.builder()
                 .transaction(transaction)
                 .account(account)
                 .entryType(entryType)
                 .amount(amount)
                 .balanceAfter(account.getBalance())
                 .build();
-        ledgerEntryRepository.save(entry);
     }
 }

@@ -20,6 +20,7 @@ import java.time.LocalDate;
 @RequestMapping("/api/v1/accounts")
 @RequiredArgsConstructor
 @Tag(name = "Account Summary", description = "Account Summary APIs")
+@SuppressWarnings(value = {"unused"})
 public class AccountController {
 
     private final AccountService accountService;

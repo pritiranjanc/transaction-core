@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/transactions")
 @RequiredArgsConstructor
 @Tag(name = "Transactions", description = "Transaction management APIs")
+@SuppressWarnings(value = "unused")
 public class TransactionController {
 
     private final TransactionService transactionService;
