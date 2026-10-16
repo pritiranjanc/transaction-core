@@ -38,7 +38,7 @@ public class TransactionServiceImpl implements TransactionService{
         Account account = accountRepository.findByIdForUpdate(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
         validateAccount(account);
         account.setBalance(account.getBalance().add(amount));
-        Transaction transaction = createTransaction(TransactionType.DEPOSIT, amount, TransactionStatus.COMPLETED,account,null);
+        Transaction transaction = createTransaction(TransactionType.DEPOSIT, amount, TransactionStatus.COMPLETED,account,null,null);
         LedgerEntry entry =  createLedgerEntry(transaction, account, EntryType.CREDIT, amount);
         ledgerEntryRepository.save(entry);
         accountRepository.save(account);
@@ -57,7 +57,7 @@ public class TransactionServiceImpl implements TransactionService{
             throw new InsufficientBalanceException(accountId);
         }
         account.setBalance(account.getBalance().subtract(amount));
-        Transaction transaction = createTransaction(TransactionType.WITHDRAWAL, amount,TransactionStatus.COMPLETED,account,null);
+        Transaction transaction = createTransaction(TransactionType.WITHDRAWAL, amount,TransactionStatus.COMPLETED,account,null,null);
         LedgerEntry entry = createLedgerEntry(transaction, account, EntryType.DEBIT, amount);
         ledgerEntryRepository.save(entry);
         accountRepository.save(account);

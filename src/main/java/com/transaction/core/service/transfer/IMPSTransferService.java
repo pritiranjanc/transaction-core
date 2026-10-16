@@ -33,7 +33,7 @@ public class IMPSTransferService implements TransferService{
         destination.setBalance(destination.getBalance().add(amount));
         source.setUpdatedAt(LocalDateTime.now());
         destination.setUpdatedAt(LocalDateTime.now());
-        Transaction transaction = createTransaction(TransactionType.TRANSFER, amount, TransactionStatus.COMPLETED,source,destination);
+        Transaction transaction = createTransaction(TransactionType.TRANSFER, amount, TransactionStatus.COMPLETED,source,destination,TransferType.IMPS);
         LedgerEntry debitEntry = LedgerEntryDTO.createLedgerEntry(transaction, source, EntryType.DEBIT, amount);
         LedgerEntry creditEntry = LedgerEntryDTO.createLedgerEntry(transaction, destination, EntryType.CREDIT, amount);
         ledgerEntryRepository.saveAll(List.of(debitEntry,creditEntry));

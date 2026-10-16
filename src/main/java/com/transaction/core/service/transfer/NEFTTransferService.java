@@ -21,7 +21,7 @@ public class NEFTTransferService implements TransferService{
 
     @Override
     public Transaction processTransfer(Account source, Account destination, BigDecimal amount) {
-        Transaction transaction = createTransaction(TransactionType.TRANSFER, amount,TransactionStatus.PENDING,source,destination);
+        Transaction transaction = createTransaction(TransactionType.TRANSFER, amount,TransactionStatus.PENDING,source,destination,TransferType.NEFT);
         transactionRepository.save(transaction);
         return transaction;
     }
