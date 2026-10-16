@@ -1,11 +1,13 @@
 package com.transaction.core.controller;
 
+import com.transaction.core.constants.EntryType;
 import com.transaction.core.dto.response.AccountDTO;
 import com.transaction.core.dto.response.LedgerEntryDTO;
 import com.transaction.core.dto.response.PageDTO;
 import com.transaction.core.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @RestController
@@ -43,6 +46,14 @@ public class AccountController {
     @GetMapping("/{accountId}/balance")
     public AccountDTO getBalance(@PathVariable Long accountId) {
         return accountService.getAccountBalance(accountId);
+    }
+
+    @Operation(description = "Get account balance for an account",summary = "Get Account balance")
+    @GetMapping("/{accountId}/{entryType}/second-highest-amount")
+    public BigDecimal getSecondHighestAmount(@PathVariable Long accountId,
+                                             @Parameter(description = "Supported transaction types", in = ParameterIn.PATH)
+                                             @PathVariable EntryType entryType) {
+        return accountService.getSecondHighestAmount(accountId,entryType);
     }
 
 }

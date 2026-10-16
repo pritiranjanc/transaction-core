@@ -1,5 +1,6 @@
 package com.transaction.core.service;
 
+import com.transaction.core.constants.EntryType;
 import com.transaction.core.dto.response.AccountDTO;
 import com.transaction.core.dto.response.LedgerEntryDTO;
 import com.transaction.core.dto.response.PageDTO;
@@ -9,12 +10,14 @@ import com.transaction.core.exception.AccountNotFoundException;
 import com.transaction.core.repository.AccountRepository;
 import com.transaction.core.repository.LedgerEntryRepository;
 import com.transaction.core.specification.LedgerEntrySpecification;
+import jakarta.persistence.EnumType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -64,5 +67,9 @@ public class AccountServiceImpl implements AccountService{
     }
 
 
+    @Override
+    public BigDecimal getSecondHighestAmount(Long accountId, EntryType type){
+        return ledgerEntryRepository.findByAccountIdAndEntryType(accountId, type);
+    }
 
 }

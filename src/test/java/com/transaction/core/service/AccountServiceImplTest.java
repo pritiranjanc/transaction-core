@@ -29,6 +29,7 @@ import java.util.Optional;
 
 import static com.transaction.core.utils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -145,6 +146,13 @@ public class AccountServiceImplTest {
                 LocalDate.of(2026,10,6),LocalDate.of(2026,10,10), pageable);
         assertNotNull(response);
         assertEquals(2, response.content().size());
+    }
+
+    @Test
+    public void testSecondHighest(){
+        when(ledgerEntryRepository.findByAccountIdAndEntryType(any(),any())).thenReturn(BigDecimal.TEN);
+        BigDecimal amount = accountService.getSecondHighestAmount(101L,EntryType.CREDIT);
+        assertEquals(new BigDecimal("10"),amount);
     }
 
 
