@@ -24,15 +24,9 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("$.balance").value("1500.0"));
     }
 
-   @Test
-   public void testGetTransactionHistory() throws Exception {
-       mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/accounts/1/transactions"))
-               .andExpect(status().isOk());
-   }
-
     @Test
     public void testGetTransactions() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/accounts/1/transactions-by-date-range?" +
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/accounts/1/transactions?" +
                         "from-date=2026-10-06&to-date=2026-10-10"))
                 .andExpect(status().isOk());
     }

@@ -1,8 +1,8 @@
 package com.transaction.core.controller;
 
 import com.transaction.core.dto.response.AccountDTO;
-import com.transaction.core.dto.response.PageDTO;
 import com.transaction.core.dto.response.LedgerEntryDTO;
+import com.transaction.core.dto.response.PageDTO;
 import com.transaction.core.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,18 +24,8 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    @Operation(description = "Get transaction history for an account",summary = "Get Transaction history")
-    @GetMapping("/{accountId}/transactions")
-    public PageDTO<LedgerEntryDTO> getTransactionHistory(
-            @PathVariable Long accountId,
-            @RequestParam(required = false,name = "page",defaultValue = "0") Integer page,
-            @RequestParam(required = false,name = "page-size", defaultValue = "10") Integer pageSize) {
-        return accountService.getTransactionHistory(accountId,
-                PageRequest.of(page,pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
-    }
-
     @Operation(description = "Get transaction history for an account by date range",summary = "Get Transaction Summary")
-    @GetMapping("/{accountId}/transactions-by-date-range")
+    @GetMapping("/{accountId}/transactions")
     public PageDTO<LedgerEntryDTO> getTransactions(
             @PathVariable Long accountId,
             @Parameter(description = "From date (format: yyyy-MM-dd)", schema = @Schema(type = "string", format = "date"))
