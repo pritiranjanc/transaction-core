@@ -16,19 +16,19 @@ VALUES
 
 
 INSERT INTO transactions
-    (transaction_type,amount,status,reference)
+    (transaction_type,amount,status,reference,from_account)
 VALUES
-    ('DEPOSIT',1500.00,'COMPLETED','dee95907-fcc8-443b-a01a-93029db2f35b');
+    ('DEPOSIT',1500.00,'COMPLETED','dee95907-fcc8-443b-a01a-93029db2f35b',1);
 
 INSERT INTO transactions
-    (transaction_type,amount,status,reference)
+    (transaction_type,amount,status,reference,from_account)
 VALUES
-    ('DEPOSIT',500.00,'COMPLETED','e1ae5298-08b8-455c-93d5-a41cac1a62a5');
+    ('DEPOSIT',500.00,'COMPLETED','e1ae5298-08b8-455c-93d5-a41cac1a62a5',2);
 
 INSERT INTO transactions
-    (transaction_type,amount,status,reference)
+    (transaction_type,amount,status,reference,from_account)
 VALUES
-    ('DEPOSIT',50000.00,'COMPLETED','e1ae5298-08b8-455c-93d5-a41cac1a62a6');
+    ('DEPOSIT',50000.00,'COMPLETED','e1ae5298-08b8-455c-93d5-a41cac1a62a6',3);
 
 
 

@@ -2,6 +2,7 @@ package com.transaction.core.entity;
 
 import com.transaction.core.constants.TransactionStatus;
 import com.transaction.core.constants.TransactionType;
+import com.transaction.core.constants.TransferType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,5 +37,20 @@ public class Transaction extends BaseEntity{
 
     @Column(nullable = false, unique = true,name = "reference")
     private UUID reference;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "from_account")
+    private Account fromAccount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "to_account")
+    private Account toAccount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transfer_type")
+    private TransferType transferType;
+
+
+
 
 }

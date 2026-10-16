@@ -1,6 +1,8 @@
 package com.transaction.core.service;
 
 import com.transaction.core.constants.AccountStatus;
+import com.transaction.core.constants.TransactionType;
+import com.transaction.core.constants.TransferType;
 import com.transaction.core.dto.response.TransactionDTO;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
@@ -9,6 +11,9 @@ import com.transaction.core.exception.InsufficientBalanceException;
 import com.transaction.core.exception.InvalidTransactionException;
 import com.transaction.core.repository.AccountRepository;
 import com.transaction.core.repository.LedgerEntryRepository;
+import com.transaction.core.service.transfer.IMPSTransferService;
+import com.transaction.core.service.transfer.TransferServiceFactory;
+import com.transaction.core.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +23,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,6 +36,12 @@ public class TransactionServiceImplTest {
 
     @Mock
     private LedgerEntryRepository ledgerEntryRepository;
+
+    @Mock
+    private TransferServiceFactory serviceFactory;
+
+    @Mock
+    private IMPSTransferService impsTransferService;
 
     @InjectMocks
     private TransactionServiceImpl transactionService;
@@ -111,18 +121,17 @@ public class TransactionServiceImplTest {
         BigDecimal amount = new BigDecimal("400.00");
         when(accountRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(sourceAccount));
         when(accountRepository.findByIdForUpdate(2L)).thenReturn(Optional.of(destinationAccount));
-        TransactionDTO result = transactionService.processTransfer(1L, 2L, amount);
+        when(serviceFactory.getTransferService(any())).thenReturn(impsTransferService);
+        when(impsTransferService.processTransfer(any(),any(),any())).thenReturn(TestUtils.getTransaction(1L, TransactionType.TRANSFER));
+        TransactionDTO result = transactionService.processTransfer(1L, 2L, amount, TransferType.IMPS);
         assertNotNull(result);
-        assertEquals(new BigDecimal("600.00"), sourceAccount.getBalance());
-        assertEquals(new BigDecimal("900.00"), destinationAccount.getBalance());
-        verify(accountRepository).saveAll(List.of(sourceAccount,destinationAccount));
-        verify(ledgerEntryRepository, times(1)).saveAll(anyList());
     }
 
     @Test
     void shouldRejectTransferToSameAccount() {
         BigDecimal amount = new BigDecimal("100.00");
-        assertThrows(InvalidTransactionException.class, () -> transactionService.processTransfer(1L, 1L, amount));
+        assertThrows(InvalidTransactionException.class, () ->
+                transactionService.processTransfer(1L, 1L, amount,TransferType.IMPS));
     }
 
     @Test
@@ -130,7 +139,8 @@ public class TransactionServiceImplTest {
         BigDecimal amount = new BigDecimal("1500.00");
         when(accountRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(sourceAccount));
         when(accountRepository.findByIdForUpdate(2L)).thenReturn(Optional.of(destinationAccount));
-        assertThrows(InsufficientBalanceException.class, () -> transactionService.processTransfer(1L, 2L, amount));
+        assertThrows(InsufficientBalanceException.class, () ->
+                transactionService.processTransfer(1L, 2L, amount,TransferType.IMPS));
         assertEquals(new BigDecimal("1000.00"), sourceAccount.getBalance());
         assertEquals(new BigDecimal("500.00"), destinationAccount.getBalance());
     }
@@ -138,7 +148,8 @@ public class TransactionServiceImplTest {
     @Test
     void shouldRejectTransferWhenAmountIsInvalid() {
         BigDecimal amount = BigDecimal.ZERO;
-        assertThrows(InvalidTransactionException.class, () -> transactionService.processTransfer(1L, 2L, amount));
+        assertThrows(InvalidTransactionException.class, () ->
+                transactionService.processTransfer(1L, 2L, amount,TransferType.IMPS));
     }
 
     @Test

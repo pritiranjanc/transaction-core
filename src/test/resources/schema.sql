@@ -1,3 +1,5 @@
+
+
 CREATE TABLE accounts (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     account_number  VARCHAR(50) NOT NULL UNIQUE,
@@ -14,9 +16,15 @@ CREATE TABLE transactions (
     transaction_type  VARCHAR(20) NOT NULL,
     amount            NUMERIC(19, 2) NOT NULL,
     status            VARCHAR(20) NOT NULL DEFAULT 'COMPLETED',
+    from_account      INT NOT NULL,
+    to_account        INT NULL,
+    transfer_type     VARCHAR(20),
     reference         UUID NOT NULL UNIQUE,
     created_at        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_transaction_account FOREIGN KEY (from_account) REFERENCES accounts(id),
+    CONSTRAINT fk_transaction_to_account FOREIGN KEY (to_account) REFERENCES accounts(id)
 );
 
 CREATE TABLE ledger_entries (
@@ -27,7 +35,7 @@ CREATE TABLE ledger_entries (
     amount           NUMERIC(19, 2) NOT NULL,
     balance_after    NUMERIC(19, 2) NOT NULL,
     created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_ledger_transaction FOREIGN KEY (transaction_id) REFERENCES transactions(id),
     CONSTRAINT fk_ledger_account FOREIGN KEY (account_id) REFERENCES accounts(id),

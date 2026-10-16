@@ -1,9 +1,6 @@
 package com.transaction.core.service;
 
-import com.transaction.core.constants.AccountStatus;
-import com.transaction.core.constants.EntryType;
-import com.transaction.core.constants.TransactionStatus;
-import com.transaction.core.constants.TransactionType;
+import com.transaction.core.constants.*;
 import com.transaction.core.dto.response.TransactionDTO;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
@@ -13,15 +10,16 @@ import com.transaction.core.exception.InsufficientBalanceException;
 import com.transaction.core.exception.InvalidTransactionException;
 import com.transaction.core.repository.AccountRepository;
 import com.transaction.core.repository.LedgerEntryRepository;
+import com.transaction.core.service.transfer.TransferServiceFactory;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+
+import static com.transaction.core.dto.response.LedgerEntryDTO.createLedgerEntry;
+import static com.transaction.core.dto.response.TransactionDTO.createTransaction;
 
 @Service
 @AllArgsConstructor
@@ -30,6 +28,7 @@ public class TransactionServiceImpl implements TransactionService{
 
     private final AccountRepository accountRepository;
     private final LedgerEntryRepository ledgerEntryRepository;
+    private final TransferServiceFactory serviceFactory;
 
 
     @Transactional
@@ -39,7 +38,7 @@ public class TransactionServiceImpl implements TransactionService{
         Account account = accountRepository.findByIdForUpdate(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
         validateAccount(account);
         account.setBalance(account.getBalance().add(amount));
-        Transaction transaction = createTransaction(TransactionType.DEPOSIT, amount);
+        Transaction transaction = createTransaction(TransactionType.DEPOSIT, amount, TransactionStatus.COMPLETED,account,null);
         LedgerEntry entry =  createLedgerEntry(transaction, account, EntryType.CREDIT, amount);
         ledgerEntryRepository.save(entry);
         accountRepository.save(account);
@@ -58,7 +57,7 @@ public class TransactionServiceImpl implements TransactionService{
             throw new InsufficientBalanceException(accountId);
         }
         account.setBalance(account.getBalance().subtract(amount));
-        Transaction transaction = createTransaction(TransactionType.WITHDRAWAL, amount);
+        Transaction transaction = createTransaction(TransactionType.WITHDRAWAL, amount,TransactionStatus.COMPLETED,account,null);
         LedgerEntry entry = createLedgerEntry(transaction, account, EntryType.DEBIT, amount);
         ledgerEntryRepository.save(entry);
         accountRepository.save(account);
@@ -67,18 +66,12 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
     @Transactional
-    public TransactionDTO processTransfer(Long fromAccountId, Long toAccountId, BigDecimal amount) {
+    public TransactionDTO processTransfer(Long fromAccountId, Long toAccountId, BigDecimal amount, TransferType type) {
         log.info("Starting transfer: fromAccountId={}, toAccountId={}, amount={}", fromAccountId, toAccountId, amount);
         validateAmount(amount);
         if (fromAccountId.equals(toAccountId)) {
             throw new InvalidTransactionException("Source and destination accounts must be different");
         }
-
-        /*
-         * Always lock accounts in a deterministic order.
-         * This reduces the chance of deadlocks when two
-         * transfers happen in opposite directions.
-         */
         Long firstId = Math.min(fromAccountId, toAccountId);
         Long secondId = Math.max(fromAccountId, toAccountId);
         Account first = accountRepository.findByIdForUpdate(firstId).orElseThrow(() -> new AccountNotFoundException(firstId));
@@ -92,15 +85,7 @@ public class TransactionServiceImpl implements TransactionService{
         if (source.getBalance().compareTo(amount) <= 0) {
             throw new InsufficientBalanceException(fromAccountId);
         }
-        source.setBalance(source.getBalance().subtract(amount));
-        destination.setBalance(destination.getBalance().add(amount));
-        source.setUpdatedAt(LocalDateTime.now());
-        destination.setUpdatedAt(LocalDateTime.now());
-        Transaction transaction = createTransaction(TransactionType.TRANSFER, amount);
-        LedgerEntry debitEntry = createLedgerEntry(transaction, source, EntryType.DEBIT, amount);
-        LedgerEntry creditEntry = createLedgerEntry(transaction, destination, EntryType.CREDIT, amount);
-        ledgerEntryRepository.saveAll(List.of(debitEntry,creditEntry));
-        accountRepository.saveAll(List.of(source,destination));
+        Transaction transaction = serviceFactory.getTransferService(type.name()).processTransfer(source,destination,amount);
         log.info("Transfer completed: transactionId={}, fromAccountId={}, toAccountId={}", transaction.getId(), fromAccountId, toAccountId);
         return TransactionDTO.from(transaction);
     }
@@ -117,22 +102,5 @@ public class TransactionServiceImpl implements TransactionService{
         }
     }
 
-    private Transaction createTransaction(TransactionType type, BigDecimal amount) {
-        return Transaction.builder()
-                .transactionType(type)
-                .amount(amount)
-                .status(TransactionStatus.COMPLETED)
-                .reference(UUID.randomUUID())
-                .build();
-    }
 
-    private LedgerEntry createLedgerEntry(Transaction transaction, Account account, EntryType entryType, BigDecimal amount) {
-        return LedgerEntry.builder()
-                .transaction(transaction)
-                .account(account)
-                .entryType(entryType)
-                .amount(amount)
-                .balanceAfter(account.getBalance())
-                .build();
-    }
 }

@@ -1,5 +1,7 @@
 package com.transaction.core.dto.response;
 
+import com.transaction.core.constants.EntryType;
+import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
 import com.transaction.core.entity.Transaction;
 import lombok.Builder;
@@ -28,6 +30,16 @@ public record LedgerEntryDTO(
                 .amount(entry.getAmount())
                 .balanceAfter(entry.getBalanceAfter())
                 .createdAt(transaction.getCreatedAt())
+                .build();
+    }
+
+    public static LedgerEntry createLedgerEntry(Transaction transaction, Account account, EntryType entryType, BigDecimal amount) {
+        return LedgerEntry.builder()
+                .transaction(transaction)
+                .account(account)
+                .entryType(entryType)
+                .amount(amount)
+                .balanceAfter(account.getBalance())
                 .build();
     }
 }

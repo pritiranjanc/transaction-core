@@ -1,5 +1,8 @@
 package com.transaction.core.dto.response;
 
+import com.transaction.core.constants.TransactionStatus;
+import com.transaction.core.constants.TransactionType;
+import com.transaction.core.entity.Account;
 import com.transaction.core.entity.Transaction;
 import lombok.Builder;
 
@@ -24,6 +27,18 @@ public record TransactionDTO(
                 .status(transaction.getStatus().name())
                 .reference(transaction.getReference())
                 .createdAt(transaction.getCreatedAt())
+                .build();
+    }
+
+    public static Transaction createTransaction(TransactionType type, BigDecimal amount, TransactionStatus status,
+                                                Account account,Account to) {
+        return Transaction.builder()
+                .transactionType(type)
+                .amount(amount)
+                .status(status)
+                .reference(UUID.randomUUID())
+                .fromAccount(account)
+                .toAccount(to)
                 .build();
     }
 }

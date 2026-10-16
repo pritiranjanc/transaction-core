@@ -61,7 +61,7 @@ public class TransactionControllerTest {
             "amount": "100"
         }
         """;
-        mockMvc.perform(post("/api/v1/transactions/transfer").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        mockMvc.perform(post("/api/v1/transactions/IMPS/transfer").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transactionType").value(TransactionType.TRANSFER.name()))
                 .andExpect(jsonPath("$.status").value(TransactionStatus.COMPLETED.name()))
