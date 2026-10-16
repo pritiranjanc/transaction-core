@@ -4,8 +4,8 @@ import com.transaction.core.constants.AccountStatus;
 import com.transaction.core.constants.EntryType;
 import com.transaction.core.constants.TransactionType;
 import com.transaction.core.dto.response.AccountDTO;
-import com.transaction.core.dto.response.PageDTO;
 import com.transaction.core.dto.response.LedgerEntryDTO;
+import com.transaction.core.dto.response.PageDTO;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
 import com.transaction.core.exception.AccountNotFoundException;
@@ -14,18 +14,22 @@ import com.transaction.core.repository.LedgerEntryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.transaction.core.utils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -120,6 +124,27 @@ public class AccountServiceImplTest {
         when(accountRepository.existsById(accountId)).thenReturn(false);
         assertThrows(AccountNotFoundException.class, () -> accountService.getTransactionHistory(accountId, pageable));
         verify(accountRepository).existsById(accountId);
+    }
+
+    @Test
+    void getTransactionsByAccountAndDateRange() {
+        Long accountId = 1L;
+        Pageable pageable = PageRequest.of(0,20, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        LedgerEntry entry1 = getLedgerEntry(101L,account,EntryType.CREDIT,
+                new BigDecimal("500.00"),new BigDecimal("1500.00"),
+                getTransaction(101L,TransactionType.DEPOSIT));
+
+        LedgerEntry entry2 = getLedgerEntry(102L,account,EntryType.DEBIT,
+                new BigDecimal("200.00"),new BigDecimal("1000.00"),
+                getTransaction(102L,TransactionType.WITHDRAWAL));
+
+        Page<LedgerEntry> ledgerPage = new PageImpl<>(List.of(entry1, entry2), pageable, 2);
+        when(ledgerEntryRepository.findAll(ArgumentMatchers.<Specification<LedgerEntry>>any(), eq(pageable))).thenReturn(ledgerPage);
+        PageDTO<LedgerEntryDTO> response = accountService.getTransactions(accountId,
+                LocalDate.of(2026,10,6),LocalDate.of(2026,10,10), pageable);
+        assertNotNull(response);
+        assertEquals(2, response.content().size());
     }
 
 

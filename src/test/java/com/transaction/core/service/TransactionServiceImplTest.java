@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -153,8 +154,7 @@ public class TransactionServiceImplTest {
         assertEquals(new BigDecimal("600.00"), sourceAccount.getBalance());
         assertEquals(new BigDecimal("900.00"), destinationAccount.getBalance());
 
-        verify(accountRepository).save(sourceAccount);
-        verify(accountRepository).save(destinationAccount);
+        verify(accountRepository).saveAll(List.of(sourceAccount,destinationAccount));
         verify(transactionRepository).save(any(Transaction.class));
         verify(ledgerEntryRepository, times(2)).save(any(LedgerEntry.class));
     }

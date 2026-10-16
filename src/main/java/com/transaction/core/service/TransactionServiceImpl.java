@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -97,12 +98,11 @@ public class TransactionServiceImpl implements TransactionService{
         destination.setBalance(destination.getBalance().add(amount));
         source.setUpdatedAt(LocalDateTime.now());
         destination.setUpdatedAt(LocalDateTime.now());
-        com.transaction.core.entity.Transaction transaction = createTransaction(TransactionType.TRANSFER, amount);
+        Transaction transaction = createTransaction(TransactionType.TRANSFER, amount);
         transactionRepository.save(transaction);
         createLedgerEntry(transaction, source, EntryType.DEBIT, amount);
         createLedgerEntry(transaction, destination, EntryType.CREDIT, amount);
-        accountRepository.save(source);
-        accountRepository.save(destination);
+        accountRepository.saveAll(List.of(source,destination));
         log.info("Transfer completed: transactionId={}, fromAccountId={}, toAccountId={}", transaction.getId(), fromAccountId, toAccountId);
         return TransactionDTO.from(transaction);
     }

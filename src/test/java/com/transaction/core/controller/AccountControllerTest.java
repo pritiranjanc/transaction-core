@@ -30,4 +30,11 @@ public class AccountControllerTest {
                .andExpect(status().isOk());
    }
 
+    @Test
+    public void testGetTransactions() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/accounts/1/transactions-by-date-range?" +
+                        "from-date=2026-10-06&to-date=2026-10-10"))
+                .andExpect(status().isOk());
+    }
+
 }

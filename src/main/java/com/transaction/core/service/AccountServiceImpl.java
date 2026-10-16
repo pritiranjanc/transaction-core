@@ -1,19 +1,21 @@
 package com.transaction.core.service;
 
 import com.transaction.core.dto.response.AccountDTO;
-import com.transaction.core.dto.response.PageDTO;
 import com.transaction.core.dto.response.LedgerEntryDTO;
+import com.transaction.core.dto.response.PageDTO;
 import com.transaction.core.entity.Account;
 import com.transaction.core.entity.LedgerEntry;
 import com.transaction.core.exception.AccountNotFoundException;
 import com.transaction.core.repository.AccountRepository;
 import com.transaction.core.repository.LedgerEntryRepository;
+import com.transaction.core.specification.LedgerEntrySpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -37,7 +39,8 @@ public class AccountServiceImpl implements AccountService{
                 .map(LedgerEntryDTO::from)
                 .toList();
         log.info("Completed Transaction History: accountId={}", accountId);
-        return PageDTO.from(transactions,page.getTotalPages(),page.getNumber(),page.getSize(), page.getTotalElements());
+        return PageDTO.from(transactions,page.getTotalPages(),page.getNumber(),
+                page.getSize(), page.getTotalElements());
     }
 
     @Override
@@ -46,6 +49,18 @@ public class AccountServiceImpl implements AccountService{
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
         log.info("Completed getAccount Balance : accountId={}", accountId);
         return AccountDTO.from(account);
+    }
+
+    @Override
+    public PageDTO<LedgerEntryDTO> getTransactions(Long accountId, LocalDate fromDate,LocalDate toDate, Pageable pageable){
+        Page<LedgerEntry> page = ledgerEntryRepository.findAll(LedgerEntrySpecification.add(accountId,fromDate,toDate), pageable);
+        List<LedgerEntryDTO> transactions =  page.getContent()
+                .stream()
+                .map(LedgerEntryDTO::from)
+                .toList();
+        log.info("Completed Transaction History: accountId={}", accountId);
+        return PageDTO.from(transactions,page.getTotalPages(),page.getNumber(),
+                page.getSize(), page.getTotalElements());
     }
 
 
