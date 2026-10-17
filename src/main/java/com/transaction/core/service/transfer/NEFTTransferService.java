@@ -11,6 +11,7 @@ import com.transaction.core.repository.AccountRepository;
 import com.transaction.core.repository.LedgerEntryRepository;
 import com.transaction.core.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import static com.transaction.core.dto.response.TransactionDTO.createTransaction
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NEFTTransferService implements TransferService{
 
     private final TransactionRepository transactionRepository;
@@ -46,16 +48,21 @@ public class NEFTTransferService implements TransferService{
         Transaction txn = transactionRepository.findByIdForUpdate(transactionId).orElse(null);
         assert txn != null;
         if (!TransferType.NEFT.equals(txn.getTransferType()) || !TransactionStatus.PENDING.equals(txn.getStatus())) {
+            log.warn("Invalid Transaction to Process {} {} {}",transactionId,txn.getTransferType(),txn.getStatus());
             return;
         }
         if(txn.getAmount().compareTo(txn.getSourceAccount().getBalance())>0){
             txn.setStatus(TransactionStatus.FAILED);
             transactionRepository.save(txn);
+            log.warn("Invalid Transaction to Process with amount {} {} {} {} ",
+                    transactionId,txn.getTransferType(),txn.getStatus(),txn.getAmount());
             return;
         }
         boolean debitExists = ledgerEntryRepository.existsByTransactionIdAndEntryType(transactionId, EntryType.CREDIT);
         boolean creditExists = ledgerEntryRepository.existsByTransactionIdAndEntryType(transactionId, EntryType.CREDIT);
         if(debitExists && creditExists){
+            log.warn("Ledger Entry already exist {} {} {} {} ",
+                    transactionId,txn.getTransferType(),txn.getStatus(),txn.getAmount());
             return;
         }
         Account source = txn.getSourceAccount();
@@ -68,6 +75,8 @@ public class NEFTTransferService implements TransferService{
         ledgerEntryRepository.saveAll(List.of(creditEntry,debitEntry));
         accountRepository.saveAll(List.of(source,destination));
         transactionRepository.save(txn);
+        log.info("Transaction successfully processed {} {} {} {} ",
+                transactionId,txn.getTransferType(),txn.getStatus(),txn.getAmount());
     }
 
 }

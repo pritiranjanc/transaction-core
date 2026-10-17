@@ -7,7 +7,6 @@ import com.transaction.core.service.transfer.TransferServiceFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -34,7 +33,7 @@ public class NEFTTransactionScheduler {
         transactionIds.forEach(txn-> {
                     try {
                         transferServiceFactory.getTransferService(TransferType.NEFT.name()).processPendingTransfer(txn);
-                        log.error("Transaction Processing Completed {}",txn);
+                        log.info("Transaction Processing Completed {}",txn);
                     }catch(Exception ex){
                         log.error("Transaction Processing Failed {}",txn);
                     }
