@@ -11,3 +11,9 @@ spring:
     hibernate:
       ddl-auto: none
     database-platform: org.hibernate.dialect.H2Dialect
+
+app:
+  scheduler:
+    neft:
+      batch-size: 10
+      scheduled-delay: 30000

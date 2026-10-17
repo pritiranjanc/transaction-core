@@ -39,8 +39,8 @@ public class Transaction extends BaseEntity{
     private UUID reference;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "from_account")
-    private Account fromAccount;
+    @JoinColumn(name = "source_account")
+    private Account sourceAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_account")

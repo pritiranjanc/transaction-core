@@ -14,3 +14,9 @@ springdoc:
   api-docs:
     enabled: true
 
+app:
+  scheduler:
+    neft:
+      batch-size: 10
+      scheduled-delay: 30000
+

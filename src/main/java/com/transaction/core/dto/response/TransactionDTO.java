@@ -38,7 +38,7 @@ public record TransactionDTO(
                 .amount(amount)
                 .status(status)
                 .reference(UUID.randomUUID())
-                .fromAccount(account)
+                .sourceAccount(account)
                 .toAccount(to)
                 .transferType(transferType)
                 .build();

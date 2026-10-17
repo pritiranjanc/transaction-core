@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 public class LedgerEntryRepositoryTest {
@@ -29,5 +30,11 @@ public class LedgerEntryRepositoryTest {
     void findByAccountIdAndEntryType(){
         BigDecimal amount =  ledgerEntryRepository.findByAccountIdAndEntryType(1L, EntryType.CREDIT);
         assertNull(amount);
+    }
+
+    @Test
+    void existsByTransactionIdAndEntryType(){
+        boolean exist =  ledgerEntryRepository.existsByTransactionIdAndEntryType(1L, EntryType.CREDIT);
+        assertTrue(exist);
     }
 }

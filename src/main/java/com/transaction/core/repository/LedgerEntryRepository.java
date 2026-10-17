@@ -24,4 +24,6 @@ public interface LedgerEntryRepository
             """)
     BigDecimal findByAccountIdAndEntryType(@Param("accountId") Long accountId, @Param("entryType") EntryType entryType);
 
+    boolean existsByTransactionIdAndEntryType(Long transactionId, EntryType entryType);
+
 }
