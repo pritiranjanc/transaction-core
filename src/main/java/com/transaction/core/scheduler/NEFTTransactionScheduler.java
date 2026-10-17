@@ -16,6 +16,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@SuppressWarnings(value = "unused")
 public class NEFTTransactionScheduler {
 
     private final TransactionRepository transactionRepository;
